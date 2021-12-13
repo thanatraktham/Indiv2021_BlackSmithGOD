@@ -10,11 +10,11 @@ public class EquipWeapon : MonoBehaviour
     public Sprite weaponSprite;
 
     private GameManager gm;
-    private playerMovement player;
+    private PlayerController player;
 
     private void Start() {
         gm = GameObject.FindGameObjectWithTag("GameController").GetComponent<GameManager>();
-        player = GameObject.FindGameObjectWithTag("Player").GetComponent<playerMovement>();
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
     }
 
     public void equipWeapon() {

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RangeController : MonoBehaviour
 {
-    public playerMovement player;
+    public PlayerController player;
     public GameManager gm;
     public HealthBar healthBar;
     public ArmorBar armorBar;

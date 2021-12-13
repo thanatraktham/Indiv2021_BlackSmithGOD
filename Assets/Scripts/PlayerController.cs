@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class playerMovement : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     //PlayerComponent//
     public Animator animator;
@@ -40,6 +40,7 @@ public class playerMovement : MonoBehaviour
     public LayerMask enemyLayers;
     public LayerMask crateLayers;
     public Transform attackPoint;
+    public Animator meleeWeaponAnim;
     private float enemyKnockbackForce;
     private float nextAttackTime = 0f;
 
@@ -47,8 +48,10 @@ public class playerMovement : MonoBehaviour
     public Camera cam;
     public GameManager gm;
     public GameObject weapon;
+    public GameObject rotateWeapon;
     public spawnTreant spnT;
     private SpriteRenderer weaponImg;
+    private SpriteRenderer rotateWeaponImg;
     private SpriteRenderer attackPointImg;
 
 
@@ -61,12 +64,13 @@ public class playerMovement : MonoBehaviour
         dashDirection = movement;
         enemyKnockbackForce = 1000f;
         weaponImg = weapon.GetComponent<SpriteRenderer>();
+        rotateWeaponImg = rotateWeapon.GetComponent<SpriteRenderer>();
         attackPointImg = attackPoint.GetComponent<SpriteRenderer>();
     }
 
     void Update()
     {
-        if (!gm.getIsTalking()) {
+        if (!gm.getIsTalking() && Time.timeScale != 0) {
 
             // Debug.Log(weaponImg.sortingOrder);
 
@@ -172,6 +176,12 @@ public class playerMovement : MonoBehaviour
             
             float angle = Mathf.Atan2(lookDir.y, lookDir.x) * Mathf.Rad2Deg - 90f;
             attackPointImg.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            // Debug.Log("weapon rotation = " + weaponImg.transform.rotation);
+            if (gm.getActiveClass() == "range") {
+                rotateWeaponImg.transform.rotation = Quaternion.Euler(0f, 0f , angle - 45f);
+            } else if (gm.getActiveClass() == "mage") {
+                rotateWeaponImg.transform.rotation = Quaternion.Euler(0f, 0f , angle + 45f);
+            }
         }
     }
 
@@ -345,6 +355,11 @@ public class playerMovement : MonoBehaviour
     //Melee//
     void Melee() {
         animator.SetTrigger("Attack");
+
+        if (gm.getActiveClass() == "melee") {
+            meleeWeaponAnim.SetTrigger("melee");
+        }
+
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
 
         foreach(Collider2D obj in hitEnemies) {
@@ -459,8 +474,14 @@ public class playerMovement : MonoBehaviour
 
     public void setWeaponSprite(Sprite newSprite) {
         // Debug.Log("Player Weapon Sprite Set");
-        Debug.Log(weapon.GetComponent<SpriteRenderer>().sprite);
-        weapon.GetComponent<SpriteRenderer>().sprite = newSprite;
+        // Debug.Log(weapon.GetComponent<SpriteRenderer>().sprite);
+        if (gm.getActiveClass() == "melee") {
+            weapon.GetComponent<SpriteRenderer>().sprite = newSprite;
+        } else if (gm.getActiveClass() == "range" || gm.getActiveClass() == "mage") {
+            rotateWeapon.GetComponent<SpriteRenderer>().sprite = newSprite;
+        } else {
+            Debug.Log("PlayerController line 481");
+        }
     }
 
 

@@ -115,12 +115,12 @@ public class MoleController : MonoBehaviour
     }
 
     private IEnumerator cooldownAttack() {
-        // if (rb != null) {
-        //     Vector2 distance = transform.position - target.transform.position;
-        //     distance = distance.normalized * enemyKnockbackForce * 2;
-        //     rb.AddForce(distance, ForceMode2D.Impulse);
-        //     StartCoroutine(EnemyKnockback());
-        // }
+        if (rb != null) {
+            Vector2 distance = transform.position - target.transform.position;
+            distance = distance.normalized * enemyKnockbackForce * 2;
+            rb.AddForce(distance, ForceMode2D.Impulse);
+            StartCoroutine(EnemyKnockback());
+        }
         animator.SetTrigger("PreAttack");
         yield return new WaitForSeconds(1f);
         animator.SetTrigger("Attack");
@@ -128,12 +128,12 @@ public class MoleController : MonoBehaviour
         cc2d.enabled = true;
         Collider2D[] hitPlayers = Physics2D.OverlapCircleAll(transform.position, 10f, playerLayers);
         foreach(Collider2D obj in hitPlayers) {
-            obj.GetComponent<playerMovement>().TakeDamage(50);
+            obj.GetComponent<PlayerController>().TakeDamage(50);
         }
         GameObject moleAOE_tmp = Instantiate(moleAOE, transform.position, Quaternion.identity);
-        Destroy(moleAOE_tmp, .5f);
+        Destroy(moleAOE_tmp, 2f);
 
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(2f);
         alreadyAttacked = false;
         invincible = true;
         cc2d.enabled = false;

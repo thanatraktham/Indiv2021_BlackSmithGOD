@@ -24,7 +24,7 @@ public class Bullet : MonoBehaviour
             if (other != player) {
                 Find_AOE_Script();
                 if (other.CompareTag("Player")) {
-                    other.GetComponent<playerMovement>().TakeDamage(baseDamage / 2);
+                    other.GetComponent<PlayerController>().TakeDamage(baseDamage / 2);
                     Destroy(gameObject);
                     break;
                 } else if (other.CompareTag("Wall")) {
@@ -46,11 +46,8 @@ public class Bullet : MonoBehaviour
                     createHitEffect();
                     break;
                 } else if (other.CompareTag("Mole")) {
-                    Debug.Log("Bullet hit mole");
                     MoleController moleController = other.GetComponent<MoleController>();
                     if (moleController && !moleController.getIsInvincible()) {
-                    // if (moleController) {
-                        Debug.Log("mole hits");
                         other.GetComponent<MoleController>().TakeDamage(baseDamage * 3);
                         createHitEffect();
                     } else {

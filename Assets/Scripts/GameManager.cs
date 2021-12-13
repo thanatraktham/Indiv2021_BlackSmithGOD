@@ -41,6 +41,8 @@ public class GameManager : MonoBehaviour
     public Text material_3_text;
 
     //Weapons//
+    private string activeClass;
+
     public GameObject melee1;
     public GameObject melee2;
     public GameObject melee3;
@@ -59,7 +61,14 @@ public class GameManager : MonoBehaviour
     public GameObject meleeController;
     public GameObject rangeController;
     public GameObject mageController;
+
+    public GameObject meleeWeapon;
+    public GameObject rotateWeapon;
+
     public LayerMask enemyLayers;
+
+    public MenuController menuController;
+
     private int currentSceneIndex = 0;
 
     //SceneTransition//
@@ -72,24 +81,21 @@ public class GameManager : MonoBehaviour
     }
 
     void Start() {
+        Time.timeScale = 0;
+
         LoadMaterial();
 
-        // healthBar.setMaxHealth(maxHealth);
         healthBar.setHealth(maxHealth);
         currentHealth = maxHealth * 0.9f;
 
         armorBar.setArmor(maxArmor);
         currentArmor = maxArmor * 0.5f;
 
-        // staminaBar.setMaxStamina(maxStamina);
         currentStamina = maxStamina;
         staminaBar.setStamina(currentStamina);
 
         manaBar.setMaxMana(maxMana);
         manaBar.setMana(currentMana);
-
-        // signCollider = GetComponent<CircleCollider2D>();
-        // signSprite = GetComponent<SpriteRenderer>();
 
         transitionSquare = GameObject.FindGameObjectWithTag("TransitionSquare");
         
@@ -103,7 +109,6 @@ public class GameManager : MonoBehaviour
 
     void Update() {
         if (currentStamina < maxStamina) {
-            // Debug.Log("current stamina : " + currentStamina);
             regenStamina(staminaRechargeRate);
         }
 
@@ -111,12 +116,25 @@ public class GameManager : MonoBehaviour
             regenMana(manaRachargeRate);
         }
 
+        if (Input.GetKeyDown(KeyCode.P)) {
+            menuController.PauseGame();
+        }
+
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
             meleeController.GetComponent<MeleeController>().toggleMeleeStat();
+            activeClass = "melee";
+            meleeWeapon.SetActive(true);
+            rotateWeapon.SetActive(false);
         } else if (Input.GetKeyDown(KeyCode.Alpha2)) {
             rangeController.GetComponent<RangeController>().toggleRangeStat();
+            activeClass = "range";
+            meleeWeapon.SetActive(false);
+            rotateWeapon.SetActive(true);
         } else if (Input.GetKeyDown(KeyCode.Alpha3)) {
             mageController.GetComponent<MageController>().toggleMageStat();
+            activeClass = "mage";
+            meleeWeapon.SetActive(false);
+            rotateWeapon.SetActive(true);
         }
 
         // Enabled Sign
@@ -379,31 +397,42 @@ public class GameManager : MonoBehaviour
     public void setActiveWeapon(string str, int level) {
         Debug.Log("Pre set active weapon");
         resetAllWeapons();
+        setActiveClass(str);
 
+        // Sprite tmp_weapon_sprite = meleeWeapon.GetComponent<SpriteRenderer>().sprite;
+        // Sprite tmp_rotate_sprite = rotateWeapon.GetComponent<SpriteRenderer>().sprite;
         if (str == "melee") {
             if (level == 1) {
-                Debug.Log("set melee 1 to true");
                 melee1.SetActive(true);
+                // tmp_weapon_sprite = melee1.GetComponent<SpriteRenderer>().sprite;
             } else if (level == 2) {
                 melee2.SetActive(true);
+                // tmp_weapon_sprite = melee2.GetComponent<SpriteRenderer>().sprite;
             } else if (level == 3) {
                 melee3.SetActive(true);
+                // tmp_weapon_sprite = melee3.GetComponent<SpriteRenderer>().sprite;
             }
         } else if (str == "range") {
             if (level == 1) {
                 range1.SetActive(true);
+                // tmp_rotate_sprite = range1.GetComponent<SpriteRenderer>().sprite;
             } else if (level == 2) {
                 range2.SetActive(true);
+                // tmp_rotate_sprite = range2.GetComponent<SpriteRenderer>().sprite;
             } else if (level == 3) {
                 range3.SetActive(true);
+                // tmp_rotate_sprite = range3.GetComponent<SpriteRenderer>().sprite;
             }
         } else if (str == "mage") {
             if (level == 1) {
                 mage1.SetActive(true);
+                // tmp_rotate_sprite = mage1.GetComponent<SpriteRenderer>().sprite;
             } else if (level == 2) {
                 mage2.SetActive(true);
+                // tmp_rotate_sprite = mage2.GetComponent<SpriteRenderer>().sprite;
             } else if (level == 3) {
                 mage3.SetActive(true);
+                // tmp_rotate_sprite = mage3.GetComponent<SpriteRenderer>().sprite;
             }
         } else {
             Debug.Log("Not a class");
@@ -422,6 +451,14 @@ public class GameManager : MonoBehaviour
         mage1.SetActive(false);
         mage2.SetActive(false);
         mage3.SetActive(false);
+    }
+
+    public string getActiveClass() {
+        return activeClass;
+    }
+
+    public void setActiveClass(string newClass) {
+        activeClass = newClass;
     }
 
     //SceneManagement//
